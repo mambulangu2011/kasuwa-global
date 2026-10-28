@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KASUWA GLOBAL V1.0 - Daga Bulangu zuwa Duniya</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#fefce8;color:#422006}
+header{background:linear-gradient(135deg,#eab308,#ca8a04);color:white;padding:16px;text-align:center;position:sticky;top:0;z-index:10}
+.container{max-width:1000px;margin:0 auto;padding:12px}
+.search{background:white;padding:12px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;gap:8px;margin-bottom:12px}
+.search input{flex:1;padding:12px;border:1px solid #e7e5e4;border-radius:8px}
+.btn{padding:10px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.btn-yellow{background:#eab308;color:white} .btn-white{background:white;border:1px solid #e7e5e4}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow:auto}
+.tab{padding:8px 12px;background:white;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #e7e5e4;cursor:pointer;white-space:nowrap}
+.tab.active{background:#eab308;color:white;border-color:#eab308}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:white;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,0.06);border-left:4px solid #eab308}
+.card h3{font-size:15px;margin-bottom:4px} .price{font-size:18px;font-weight:800;color:#ca8a04;margin:6px 0}
+.meta{font-size:11px;color:#78716c} .actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.add-box{background:white;padding:16px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:2px dashed #eab308}
+.add-box h3{margin-bottom:10px} .row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.row input,.row select,.row textarea{flex:1;min-width:140px;padding:10px;border:1px solid #e7e5e4;border-radius:8px}
+.version{position:fixed;bottom:10px;right:10px;background:#422006;color:white;padding:6px 10px;border-radius:20px;font-size:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌾 KASUWA GLOBAL V1.0</h1>
+<p>Kasuwar Muryar Manoma - Daga Bulangu zuwa Duniya - FINAL</p>
+</header>
+<div class="container">
+<div class="add-box">
+<h3>➕ Saka Kayanka Da Murya - Mai Sauki!</h3>
+<div class="row"><input id="sunanka" placeholder="Sunanka - Mis: Mam Bulangu"><input id="lambar" placeholder="Lambar Waya/Opay"></div>
+<div class="row"><select id="kaya"><option>Zaɓi Kaya</option><option>Shinkafa</option><option>Masara</option><option>Gero</option><option>Dawa</option><option>Wake</option><option>Gyada</option><option>Man Gyada</option><option>Dabbobi</option><option>Tumatir</option><option>Barkono</option></select><input id="yawa" placeholder="Yawa - Mis: Buhu 20"><input id="farashi" placeholder="Farashi - Mis: 50000"></div>
+<div class="row"><textarea id="bayani" placeholder="Bayani da murya zai fassara..."></textarea></div>
+<div class="row"><button class="btn btn-yellow" onclick="recordDesc()">🎙️ Yi Bayani Da Murya</button><span id="recStatus"></span><audio id="recAudio" controls style="display:none;width:100%"></audio></div>
+<div class="row"><button class="btn btn-yellow" style="flex:1" onclick="addItem()">✅ Saka A Kasuwa Yanzu</button></div>
+</div>
+<div class="search"><input id="search" placeholder="Nemi kaya... Shinkafa Bulangu" oninput="render()"><button class="btn btn-yellow" onclick="render()">🔍 Nema</button></div>
+<div class="tabs">
+<div class="tab active" onclick="setTab('all',this)">Duka</div>
+<div class="tab" onclick="setTab('Shinkafa',this)">Shinkafa</div>
+<div class="tab" onclick="setTab('Masara',this)">Masara</div>
+<div class="tab" onclick="setTab('Dabbobi',this)">Dabbobi</div>
+<div class="tab" onclick="setTab('Bulangu',this)">Bulangu</div>
+<div class="tab" onclick="setTab('Gusau',this)">Gusau</div>
+</div>
+<div class="grid" id="grid"></div>
+</div>
+<div class="version">KASUWA V1.0 FINAL</div>
+<script>
+let items = [
+{id:1,kaya:"Shinkafa",yawa:"Buhu 20",farashi:50000,suna:"Mam Bulangu",wuri:"Bulangu, Zamfara",lamba:"08012345678",bayani:"Shinkafa mai kyau, an girbe yanzu a Bulangu. Babu dutse.",likes:12},
+{id:2,kaya:"Masara",yawa:"Buhu 50",farashi:35000,suna:"Alh Musa",wuri:"Kaura Namoda",lamba:"08098765432",bayani:"Masara sabuwa, mai laushi.",likes:8},
+{id:3,kaya:"Dabbobi",yawa:"Awaki 5",farashi:150000,suna:"Hajiya Aisha",wuri:"Birnin Magaji",lamba:"08123456789",bayani:"Awaki 5 masu kiwo, lafiyayyu.",likes:20},
+{id:4,kaya:"Gyada",yawa:"Buhu 10",farashi:40000,suna:"Mallam Isa",wuri:"Gusau",lamba:"07012345678",bayani:"Gyada mai mai, an busar da ita.",likes:5},
+{id:5,kaya:"Tumatir",yawa:"Kwando 15",farashi:8000,suna:"Zainab",wuri:"Bulangu",lamba:"09012345678",bayani:"Tumatir sabo, jajaye.",likes:15}
+];
+let tab='all';let recorder=null;
+function render(){
+ let term=document.getElementById('search').value.toLowerCase();
+ let filtered=items.filter(it=>{
+   let matchTab=tab==='all' || it.kaya===tab || it.wuri.includes(tab);
+   let matchSearch=(it.kaya+it.bayani+it.wuri+it.suna).toLowerCase().includes(term);
+   return matchTab && matchSearch;
+ });
+ document.getElementById('grid').innerHTML=filtered.map(it=>`
+  <div class="card">
+   <h3>${it.kaya} - ${it.yawa}</h3>
+   <div class="price">₦${it.farashi.toLocaleString()}</div>
+   <div class="meta">👤 ${it.suna} | 📍 ${it.wuri} | 📞 ${it.lamba}</div>
+   <p style="font-size:13px;margin:8px 0;line-height:1.5">${it.bayani}</p>
+   <div class="actions">
+    <button class="btn btn-yellow" onclick="buy(${it.id})">🛒 Saya Yanzu</button>
+    <button class="btn btn-white" onclick="call('${it.lamba}')">📞 Kira</button>
+    <button class="btn btn-white" onclick="like(${it.id})">❤️ ${it.likes}</button>
+    <button class="btn btn-white" onclick="share(${it.id})">🔗 Raba</button>
+   </div>
+  </div>
+ `).join('') || '<div class="card">Babu kaya - Ka saka naka!</div>';
+}
+function setTab(t,el){tab=t;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');render();}
+function addItem(){
+ let suna=document.getElementById('sunanka').value||"Mai Siyarwa";
+ let kaya=document.getElementById('kaya').value;
+ let yawa=document.getElementById('yawa').value||"1";
+ let farashi=parseInt(document.getElementById('farashi').value)||0;
+ let bayani=document.getElementById('bayani').value||"Kaya mai kyau";
+ let lamba=document.getElementById('lambar').value||"08000000000";
+ if(kaya==="Zaɓi Kaya"){alert("Zaɓi irin kaya!");return;}
+ items.unshift({id:Date.now(),kaya,yawa,farashi,suna,wuri:"Bulangu, Zamfara",lamba,bayani,likes:0});
+ render();
+ alert("✅ An saka kayanka a KASUWA GLOBAL! Allah ya sa Albarka!");
+}
+function recordDesc(){
+ let btn=document.getElementById('recStatus');
+ if(recorder && recorder.state==='recording'){recorder.stop();return;}
+ navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+   let chunks=[]; recorder=new MediaRecorder(stream);
+   recorder.ondataavailable=e=>chunks.push(e.data);
+   recorder.onstart=()=>{btn.textContent="🔴 Ana recording...";};
+   recorder.onstop=()=>{
+     let blob=new Blob(chunks,{type:'audio/webm'});
+     let url=URL.createObjectURL(blob);
+     let audio=document.getElementById('recAudio');audio.src=url;audio.style.display='block';
+     btn.textContent="✅ An gama!";
+   };
+   recorder.start();
+ }).catch(()=>alert("Ba a ba da izinin Mic ba"));
+}
+function buy(id){let it=items.find(x=>x.id===id);alert(`✅ Ka sayi ${it.kaya}! Kudi: ₦${it.farashi}`);}
+function call(num){window.open('tel:'+num);}
+function like(id){items.find(x=>x.id===id).likes++;render();}
+function share(id){let it=items.find(x=>x.id===id);if(navigator.share){navigator.share({title:it.kaya,text:it.bayani,url:location.href});}}
+render();
+</script>
+</body>
+</html>
